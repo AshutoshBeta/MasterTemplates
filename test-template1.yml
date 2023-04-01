@@ -12,11 +12,22 @@ spec:
   parameters:
     - title: Please enter service details
       required:
+        - serviceType
         - serviceName
         - owner
         - description
         - language
       properties:
+        serviceType:
+          title: Service Type
+          type: string
+          enum:
+            - Create From Service 
+            - Import The Service 
+          description: Repository will be created or existing repository will be updated
+          ui:autofocus: true
+          ui:options:
+            rows: 5
         serviceName:
           title: Service name
           type: string
@@ -82,7 +93,7 @@ spec:
   # here's the steps that are executed in series in the scaffolder backend
   steps:
     - id: devpodmain:create-github-repo
-      name: Create GitHub Repository
+      name: Create/Update GitHub Repository
       action: devpodmain:create-github-repo
       input:
         values:
@@ -90,6 +101,7 @@ spec:
           reponame: ${{ parameters.reponame }}
           hostname: ${{ parameters.hostname }}
           language: ${{ parameters.language }}
+          serviceType : ${{ parameters.serviceType }}
 
     - id: devpodmain:harness-ci
       name: Create Harness CI Pipeline
@@ -102,7 +114,7 @@ spec:
       # input:
 
     - id: devpodmain:harness-cd
-      name: Create Harness CD pipeline
+      name: Create Harness CD Pipeline
       action: devpodmain:harness-cd
       # input:
 
@@ -123,6 +135,6 @@ spec:
     links:
       - title: Repository Link
         url: ${{ steps['devpodmain:create-github-repo'].output.githubRepoLink }}
-      - title: Open in catalog
+      - title: Open in catalog 
         icon: catalog
         entityRef: ${{ steps['register'].output.entityRef }}
